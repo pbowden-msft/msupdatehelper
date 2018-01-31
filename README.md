@@ -1,7 +1,7 @@
 # msupdatehelper
 msupdate helper for Jamf Pro
 
-
+<b>Parameter Labels</b><br>
 Parameter 4 = `Managed Updates?`<br/>
 Paramater 5 = `Run Recon?`<br/>
 Parameter 6 = `Update Word @ Target Version`<br/>
