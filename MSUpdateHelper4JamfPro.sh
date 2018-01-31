@@ -14,7 +14,8 @@
 ## Feedback: pbowden@microsoft.com
 
 # IT Admin constants for application control [true = IT controls updates, false = Users control updates]
-MANAGED_UPDATES=true
+MANAGED_UPDATES=false
+RUN_RECON=false
 
 # IT Admin constants for which applications to update [set to true or false as required]
 UPDATE_WORD=true
@@ -48,12 +49,13 @@ PATH_COMPANYPORTAL="/Applications/Company Portal.app"
 
 # Harvest script parameter overrides
 OVERRIDE_MANAGED="$4"
-OVERRIDE_WORD="$5"
-OVERRIDE_EXCEL="$6"
-OVERRIDE_POWERPOINT="$7"
-OVERRIDE_OUTLOOK="$8"
-OVERRIDE_ONENOTE="$9"
-OVERRIDE_SKYPEBUSINESS="$10"
+OVERRIDE_RECON="$5"
+OVERRIDE_WORD="$6"
+OVERRIDE_EXCEL="$7"
+OVERRIDE_POWERPOINT="$8"
+OVERRIDE_OUTLOOK="$9"
+OVERRIDE_ONENOTE="$10"
+OVERRIDE_SKYPEBUSINESS="$11"
 
 # Function to parse script parameter overrides
 function GetOverrides() {
@@ -61,6 +63,11 @@ function GetOverrides() {
         MANAGED_UPDATES=true
     elif [ "$OVERRIDE_MANAGED" = "FALSE" ] || [ "$OVERRIDE_MANAGED" = "false" ] || [ "$OVERRIDE_MANAGED" = "NO" ] || [ "$OVERRIDE_MANAGED" = "no" ]; then
         MANAGED_UPDATES=false
+    fi
+    if [ "$OVERRIDE_RECON" = "TRUE" ] || [ "$OVERRIDE_RECON" = "true" ] || [ "$OVERRIDE_RECON" = "YES" ] || [ "$OVERRIDE_RECON" = "yes" ]; then
+        RUN_RECON=true
+    elif [ "$OVERRIDE_RECON" = "FALSE" ] || [ "$OVERRIDE_RECON" = "false" ] || [ "$OVERRIDE_RECON" = "NO" ] || [ "$OVERRIDE_RECON" = "no" ]; then
+        RUN_RECON=false
     fi
     if [ ! "$OVERRIDE_WORD" = "" ]; then
         UPDATE_WORD=$(echo "$OVERRIDE_WORD" | cut -d '@' -f1)
@@ -144,6 +151,13 @@ function PerformUpdate() {
 	${CMD_PREFIX}/Library/Application\ Support/Microsoft/MAU2.0/Microsoft\ AutoUpdate.app/Contents/MacOS/msupdate --install --apps $1 $2 --wait 300 2>/dev/null
 }
 
+# Function to run Jamf's Recon to update the inventory
+function RunRecon() {
+    if [ $RUN_RECON = true ]; then
+    	$(sudo jamf recon)
+    fi
+}
+
 ## MAIN
 CheckMAUInstall
 GetOverrides
@@ -190,5 +204,7 @@ if [ $UPDATE_COMPANYPORTAL = true ]; then
 	SetTargetVersion "$VERSION_COMPANYPORTAL"
 	PerformUpdate "IMCP01" "$TARGET_VERSION"
 fi
+
+RunRecon
 
 exit 0
