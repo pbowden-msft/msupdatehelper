@@ -13,19 +13,15 @@
 ## of such damages.
 ## Feedback: pbowden@microsoft.com
 
-# IT Admin constants for application control [true = IT controls updates, false = Users control updates]
-MANAGED_UPDATES=false
-RUN_RECON=false
-
 # IT Admin constants for which applications to update [set to true or false as required]
-UPDATE_WORD=true
-UPDATE_EXCEL=true
-UPDATE_POWERPOINT=true
-UPDATE_OUTLOOK=true
-UPDATE_ONENOTE=true
-UPDATE_SKYPEBUSINESS=true
-UPDATE_REMOTEDESKTOP=true
-UPDATE_COMPANYPORTAL=true
+UPDATE_WORD="true"
+UPDATE_EXCEL="true"
+UPDATE_POWERPOINT="true"
+UPDATE_OUTLOOK="true"
+UPDATE_ONENOTE="true"
+UPDATE_SKYPEBUSINESS="true"
+UPDATE_REMOTEDESKTOP="true"
+UPDATE_COMPANYPORTAL="true"
 
 # IT Admin constants for application target version [set to "latest" to get latest update, or specific build number, such as "15.41.17120500"]
 VERSION_WORD="latest"
@@ -47,52 +43,81 @@ PATH_SKYPEBUSINESS="/Applications/Skype for Business.app"
 PATH_REMOTEDESKTOP="/Applications/Microsoft Remote Desktop.app"
 PATH_COMPANYPORTAL="/Applications/Company Portal.app"
 
+# Function to enable debug logging
+function Debug() {
+    if [ "$OVERRIDE_DEBUG" == "true" ]; then
+        LOG=$(date; echo "$1")
+        echo "$LOG"
+    fi
+}
+
 # Harvest script parameter overrides
-OVERRIDE_MANAGED="$4"
-OVERRIDE_RECON="$5"
-OVERRIDE_WORD="$6"
-OVERRIDE_EXCEL="$7"
-OVERRIDE_POWERPOINT="$8"
-OVERRIDE_OUTLOOK="$9"
-OVERRIDE_ONENOTE="$10"
-OVERRIDE_SKYPEBUSINESS="$11"
+OVERRIDE_DEBUG="$4"
+OVERRIDE_WORD="$5"
+Debug "OVERRIDE_WORD: $5"
+OVERRIDE_EXCEL="$6"
+Debug "OVERRIDE_EXCEL: $6"
+OVERRIDE_POWERPOINT="$7"
+Debug "OVERRIDE_POWERPOINT: $7"
+OVERRIDE_OUTLOOK="$8"
+Debug "OVERRIDE_OUTLOOK: $8"
+OVERRIDE_SKYPEBUSINESS="$9"
+Debug "OVERRIDE_SKYPEBUSINESS: $9"
+
+# Function to evaluate app update override
+function GetUpdateOverride() {
+    if [ ! "$1" = "" ]; then
+        local UPDATE_FIELD1=$(echo "$1" | cut -d '@' -f1)
+        if [ "$UPDATE_FIELD1" == "TRUE" ] || [ "$UPDATE_FIELD1" == "true" ] || [ "$UPDATE_FIELD1" == "YES" ] || [ "$UPDATE_FIELD1" == "yes" ]; then
+            echo "true"
+        elif [ "$UPDATE_FIELD1" == "FALSE" ] || [ "$UPDATE_FIELD1" == "false" ] || [ "$UPDATE_FIELD1" == "NO" ] || [ "$UPDATE_FIELD1" == "no" ]; then
+            echo "false"
+        fi
+    else
+        echo "$2"
+    fi
+}
+
+# Function to evaluate app version override
+function GetVersionOverride() {
+    if [ ! "$1" = "" ]; then
+        local UPDATE_FIELD2=$(echo "$1" | cut -d '@' -f2)
+        if [ "$UPDATE_FIELD2" == "TRUE" ] || [ "$UPDATE_FIELD2" == "true" ] || [ "$UPDATE_FIELD2" == "YES" ] || [ "$UPDATE_FIELD2" == "yes" ] || [ "$UPDATE_FIELD2" == "FALSE" ] || [ "$UPDATE_FIELD2" == "false" ] || [ "$UPDATE_FIELD2" == "NO" ] || [ "$UPDATE_FIELD2" == "no" ]; then
+            echo "$2"
+        else
+            echo "$UPDATE_FIELD2"
+        fi
+    else
+        echo "$2"
+    fi
+}
 
 # Function to parse script parameter overrides
 function GetOverrides() {
-    if [ "$OVERRIDE_MANAGED" = "TRUE" ] || [ "$OVERRIDE_MANAGED" = "true" ] || [ "$OVERRIDE_MANAGED" = "YES" ] || [ "$OVERRIDE_MANAGED" = "yes" ]; then
-        MANAGED_UPDATES=true
-    elif [ "$OVERRIDE_MANAGED" = "FALSE" ] || [ "$OVERRIDE_MANAGED" = "false" ] || [ "$OVERRIDE_MANAGED" = "NO" ] || [ "$OVERRIDE_MANAGED" = "no" ]; then
-        MANAGED_UPDATES=false
-    fi
-    if [ "$OVERRIDE_RECON" = "TRUE" ] || [ "$OVERRIDE_RECON" = "true" ] || [ "$OVERRIDE_RECON" = "YES" ] || [ "$OVERRIDE_RECON" = "yes" ]; then
-        RUN_RECON=true
-    elif [ "$OVERRIDE_RECON" = "FALSE" ] || [ "$OVERRIDE_RECON" = "false" ] || [ "$OVERRIDE_RECON" = "NO" ] || [ "$OVERRIDE_RECON" = "no" ]; then
-        RUN_RECON=false
-    fi
-    if [ ! "$OVERRIDE_WORD" = "" ]; then
-        UPDATE_WORD=$(echo "$OVERRIDE_WORD" | cut -d '@' -f1)
-        VERSION_WORD=$(echo "$OVERRIDE_WORD" | cut -d '@' -f2)
-    fi
-    if [ ! "$OVERRIDE_EXCEL" = "" ]; then
-        UPDATE_EXCEL=$(echo "$OVERRIDE_EXCEL" | cut -d '@' -f1)
-        VERSION_EXCEL=$(echo "$OVERRIDE_EXCEL" | cut -d '@' -f2)
-    fi
-    if [ ! "$OVERRIDE_POWERPOINT" = "" ]; then
-        UPDATE_POWERPOINT=$(echo "$OVERRIDE_POWERPOINT" | cut -d '@' -f1)
-        VERSION_POWERPOINT=$(echo "$OVERRIDE_POWERPOINT" | cut -d '@' -f2)
-    fi
-    if [ ! "$OVERRIDE_OUTLOOK" = "" ]; then
-        UPDATE_OUTLOOK=$(echo "$OVERRIDE_OUTLOOK" | cut -d '@' -f1)
-        VERSION_OUTLOOK=$(echo "$OVERRIDE_OUTLOOK" | cut -d '@' -f2)
-    fi
-    if [ ! "$OVERRIDE_ONENOTE" = "" ]; then
-        UPDATE_ONENOTE=$(echo "$OVERRIDE_ONENOTE" | cut -d '@' -f1)
-        VERSION_ONENOTE=$(echo "$OVERRIDE_ONENOTE" | cut -d '@' -f2)
-    fi
-    if [ ! "$OVERRIDE_SKYPEBUSINESS" = "" ]; then
-        UPDATE_SKYPEBUSINESS=$(echo "$OVERRIDE_SKYPEBUSINESS" | cut -d '@' -f1)
-        VERSION_SKYPEBUSINESS=$(echo "$OVERRIDE_SKYPEBUSINESS" | cut -d '@' -f2)
-    fi
+    UPDATE_WORD=$(GetUpdateOverride "$OVERRIDE_WORD" "$UPDATE_WORD")
+    Debug "Resolved UPDATE_WORD: $UPDATE_WORD"
+    VERSION_WORD=$(GetVersionOverride "$OVERRIDE_WORD" "$VERSION_WORD")
+    Debug "Resolved VERSION_WORD: $VERSION_WORD"
+
+    UPDATE_EXCEL=$(GetUpdateOverride "$OVERRIDE_EXCEL" "$UPDATE_EXCEL")
+    Debug "Resolved UPDATE_EXCEL: $UPDATE_EXCEL"
+    VERSION_EXCEL=$(GetVersionOverride "$OVERRIDE_EXCEL" "$VERSION_EXCEL")
+    Debug "Resolved VERSION_EXCEL: $VERSION_EXCEL"
+    
+    UPDATE_POWERPOINT=$(GetUpdateOverride "$OVERRIDE_POWERPOINT" "$UPDATE_POWERPOINT")
+    Debug "Resolved UPDATE_POWERPOINT: $UPDATE_POWERPOINT"
+    VERSION_POWERPOINT=$(GetVersionOverride "$OVERRIDE_POWERPOINT" "$VERSION_POWERPOINT")
+    Debug "Resolved VERSION_POWERPOINT: $VERSION_POWERPOINT"
+
+    UPDATE_OUTLOOK=$(GetUpdateOverride "$OVERRIDE_OUTLOOK" "$UPDATE_OUTLOOK")
+    Debug "Resolved UPDATE_OUTLOOK: $UPDATE_OUTLOOK"
+    VERSION_OUTLOOK=$(GetVersionOverride "$OVERRIDE_OUTLOOK" "$VERSION_OUTLOOK")
+    Debug "Resolved VERSION_OUTLOOK: $VERSION_OUTLOOK"
+
+    UPDATE_SKYPEBUSINESS=$(GetUpdateOverride "$OVERRIDE_SKYPEBUSINESS" "$UPDATE_SKYPEBUSINESS")
+    Debug "Resolved UPDATE_SKYPEBUSINESS: $UPDATE_SKYPEBUSINESS"
+    VERSION_SKYPEBUSINESS=$(GetVersionOverride "$OVERRIDE_SKYPEBUSINESS" "$VERSION_SKYPEBUSINESS")
+    Debug "Resolved VERSION_SKYPEBUSINESS: $VERSION_SKYPEBUSINESS"
 }
 
 # Function to check whether MAU 4.0 command-line updates are available
@@ -113,6 +138,7 @@ function DetermineLoginState() {
     	echo "User $CONSOLE is logged in"
     	CMD_PREFIX="sudo -u $CONSOLE "
 	fi
+	Debug "Resolved CMD_PREFIX: $CMD_PREFIX"
 }
 
 # Function to set target version for app
@@ -122,89 +148,75 @@ function SetTargetVersion() {
 	else
 		TARGET_VERSION="--version ${1}"
 	fi
-}
-
-# Function to set managed update preferences
-function SetManagedPrefs() {
-	if [ $MANAGED_UPDATES = true ]; then
-	    $(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 HowToCheck -string 'Manual')
-	    $(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 DisableInsiderCheckbox -bool TRUE)
-	    $(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 EnableCheckForUpdatesButton -bool FALSE)
-	    $(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 StartDaemonOnAppLaunch -bool FALSE)
-    else
-	    $(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 HowToCheck -string 'AutomaticDownload')
-	    $(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 DisableInsiderCheckbox -bool FALSE)
-	    $(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 EnableCheckForUpdatesButton -bool TRUE)
-	    $(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 StartDaemonOnAppLaunch -bool TRUE)    
-    fi
+	Debug "Final TARGET_VERSION: $TARGET_VERSION"
 }
 
 # Function to register an application with MAU
 function RegisterApp() {
 	if [ -d "$1" ]; then
+    	Debug "RegisterApp: Params - $1 $2"
     	$(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 Applications -dict-add "$1" "{ 'Application ID' = '$2'; LCID = 1033 ; }")
     fi
 }
 
 # Function to call 'msupdate' and update the target application
 function PerformUpdate() {
-	${CMD_PREFIX}/Library/Application\ Support/Microsoft/MAU2.0/Microsoft\ AutoUpdate.app/Contents/MacOS/msupdate --install --apps $1 $2 --wait 300 2>/dev/null
-}
-
-# Function to run Jamf's Recon to update the inventory
-function RunRecon() {
-    if [ $RUN_RECON = true ]; then
-    	$(sudo jamf recon)
-    fi
+    Debug "PerformUpdate: ${CMD_PREFIX}/Library/Application\ Support/Microsoft/MAU2.0/Microsoft\ AutoUpdate.app/Contents/MacOS/msupdate --install --apps $1 $2 --wait 600 2>/dev/null"
+	${CMD_PREFIX}/Library/Application\ Support/Microsoft/MAU2.0/Microsoft\ AutoUpdate.app/Contents/MacOS/msupdate --install --apps $1 $2 --wait 600 2>/dev/null
 }
 
 ## MAIN
 CheckMAUInstall
 GetOverrides
 DetermineLoginState
-SetManagedPrefs
 
-if [ $UPDATE_WORD = true ]; then
+if [ "$UPDATE_WORD" == "true" ]; then
+	Debug "Going for Word update"
 	RegisterApp "$PATH_WORD" "MSWD15"
 	SetTargetVersion "$VERSION_WORD"
 	PerformUpdate "MSWD15" "$TARGET_VERSION"
 fi
-if [ $UPDATE_EXCEL = true ]; then
+if [ "$UPDATE_EXCEL" == "true" ]; then
+	Debug "Going for Excel update"
 	RegisterApp "$PATH_EXCEL" "XCEL15"
 	SetTargetVersion "$VERSION_EXCEL"
 	PerformUpdate "XCEL15" "$TARGET_VERSION"
 fi
-if [ $UPDATE_POWERPOINT = true ]; then
+if [ "$UPDATE_POWERPOINT" == "true" ]; then
+	Debug "Going for PowerPoint update"
 	RegisterApp "$PATH_POWERPOINT" "PPT315"
 	SetTargetVersion "$VERSION_POWERPOINT"
 	PerformUpdate "PPT315" "$TARGET_VERSION"
 fi
-if [ $UPDATE_OUTLOOK = true ]; then
+if [ "$UPDATE_OUTLOOK" == "true" ]; then
+	Debug "Going for Outlook update"
 	RegisterApp "$PATH_OUTLOOK" "OPIM15"
 	SetTargetVersion "$VERSION_OUTLOOK"
 	PerformUpdate "OPIM15" "$TARGET_VERSION"
 fi
-if [ $UPDATE_ONENOTE = true ]; then
+if [ "$UPDATE_ONENOTE" == "true" ]; then
+	Debug "Going for OneNote update"
 	RegisterApp "$PATH_ONENOTE" "ONMC15"
 	SetTargetVersion "$VERSION_ONENOTE"
 	PerformUpdate "ONMC15" "$TARGET_VERSION"
 fi
-if [ $UPDATE_SKYPEBUSINESS = true ]; then
+if [ "$UPDATE_SKYPEBUSINESS" == "true" ]; then
+	Debug "Going for SfB update"
 	RegisterApp "$PATH_SKYPEBUSINESS" "MSFB16"
 	SetTargetVersion "$VERSION_SKYPEBUSINESS"
 	PerformUpdate "MSFB16" "$TARGET_VERSION"
 fi
-if [ $UPDATE_REMOTEDESKTOP = true ]; then
+if [ "$UPDATE_REMOTEDESKTOP" == "true" ]; then
+	Debug "Going for Remote Desktop update"
 	RegisterApp "$PATH_REMOTEDESKTOP" "MSRD10"
 	SetTargetVersion "$VERSION_REMOTEDESKTOP"
 	PerformUpdate "MSRD10" "$TARGET_VERSION"
 fi
-if [ $UPDATE_COMPANYPORTAL = true ]; then
+if [ "$UPDATE_COMPANYPORTAL" == "true" ]; then
+	Debug "Going for Company Portal update"
 	RegisterApp "$PATH_COMPANYPORTAL" "IMCP01"
 	SetTargetVersion "$VERSION_COMPANYPORTAL"
 	PerformUpdate "IMCP01" "$TARGET_VERSION"
 fi
-
-RunRecon
 
 exit 0
