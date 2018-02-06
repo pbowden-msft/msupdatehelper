@@ -128,6 +128,42 @@ function CheckMAUInstall() {
 	fi
 }
 
+# Function to check whether Office apps are installed
+function CheckAppInstall() {
+	if [ ! -e "$PATH_WORD" ]; then
+    	Debug "Word is not installed"
+    	UPDATE_WORD="false"
+	fi
+	if [ ! -e "$PATH_EXCEL" ]; then
+    	Debug "Excel is not installed"
+    	UPDATE_EXCEL="false"
+	fi
+	if [ ! -e "$PATH_POWERPOINT" ]; then
+    	Debug "PowerPoint is not installed"
+    	UPDATE_POWERPOINT="false"
+	fi
+	if [ ! -e "$PATH_OUTLOOK" ]; then
+    	Debug "Outlook is not installed"
+    	UPDATE_OUTLOOK="false"
+	fi
+	if [ ! -e "$PATH_ONENOTE" ]; then
+    	Debug "OneNote is not installed"
+    	UPDATE_ONENOTE="false"
+	fi
+	if [ ! -e "$PATH_SKYPEBUSINESS" ]; then
+    	Debug "Skype for Business is not installed"
+    	UPDATE_SKYPEBUSINESS="false"
+	fi
+	if [ ! -e "$PATH_REMOTEDESKTOP" ]; then
+    	Debug "Remote Desktop is not installed"
+    	UPDATE_REMOTEDESKTOP="false"
+	fi
+	if [ ! -e "$PATH_COMPANYPORTAL" ]; then
+    	Debug "Company Portal is not installed"
+    	UPDATE_COMPANYPORTAL="false"
+	fi
+}
+
 # Function to determine the logged-in state of the Mac
 function DetermineLoginState() {
 	CONSOLE=$(stat -f%Su /dev/console)
@@ -153,10 +189,8 @@ function SetTargetVersion() {
 
 # Function to register an application with MAU
 function RegisterApp() {
-	if [ -d "$1" ]; then
-    	Debug "RegisterApp: Params - $1 $2"
-    	$(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 Applications -dict-add "$1" "{ 'Application ID' = '$2'; LCID = 1033 ; }")
-    fi
+   	Debug "RegisterApp: Params - $1 $2"
+   	$(${CMD_PREFIX}defaults write com.microsoft.autoupdate2 Applications -dict-add "$1" "{ 'Application ID' = '$2'; LCID = 1033 ; }")
 }
 
 # Function to call 'msupdate' and update the target application
@@ -168,6 +202,7 @@ function PerformUpdate() {
 ## MAIN
 CheckMAUInstall
 GetOverrides
+CheckAppInstall
 DetermineLoginState
 
 if [ "$UPDATE_WORD" == "true" ]; then
