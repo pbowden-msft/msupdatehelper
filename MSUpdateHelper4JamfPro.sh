@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# Microsoft AutoUpdate 4.0 Helper for Jamf Pro
-# Script Version 1.0
+# Microsoft AutoUpdate Helper for Jamf Pro
+# Script Version 1.1
 #
 ## Copyright (c) 2018 Microsoft Corp. All rights reserved.
 ## Scripts are not supported under any Microsoft standard support program or service. The scripts are provided AS IS without warranty of any kind.
@@ -120,10 +120,10 @@ function GetOverrides() {
     Debug "Resolved VERSION_SKYPEBUSINESS: $VERSION_SKYPEBUSINESS"
 }
 
-# Function to check whether MAU 4.0 command-line updates are available
+# Function to check whether MAU 3.18 or later command-line updates are available
 function CheckMAUInstall() {
 	if [ ! -e "/Library/Application Support/Microsoft/MAU2.0/Microsoft AutoUpdate.app/Contents/MacOS/msupdate" ]; then
-    	echo "MAU 4.0 is not installed"
+    	echo "MAU 3.18 or later is rerquired!"
     	exit 1
 	fi
 }
