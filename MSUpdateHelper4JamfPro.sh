@@ -45,7 +45,7 @@ PATH_COMPANYPORTAL="/Applications/Company Portal.app"
 
 # Function to enable debug logging
 function Debug() {
-    if [ "$OVERRIDE_DEBUG" == "true" ]; then
+    if [ "$OVERRIDE_DEBUG" == "true" ] || [ "$OVERRIDE_DEBUG" == "TRUE" ] || [ "$OVERRIDE_DEBUG" == "True" ] || [ "$OVERRIDE_DEBUG" == "YES" ] || [ "$OVERRIDE_DEBUG" == "yes" ] || [ "$OVERRIDE_DEBUG" == "Yes" ]; then
         LOG=$(date; echo "$1")
         echo "$LOG"
     fi
@@ -72,9 +72,9 @@ Debug "OVERRIDE_REMOTEDESKTOP: ${11}"
 function GetUpdateOverride() {
     if [ ! "$1" = "" ]; then
         local UPDATE_FIELD1=$(echo "$1" | cut -d '@' -f1)
-        if [ "$UPDATE_FIELD1" == "TRUE" ] || [ "$UPDATE_FIELD1" == "true" ] || [ "$UPDATE_FIELD1" == "YES" ] || [ "$UPDATE_FIELD1" == "yes" ]; then
+        if [ "$UPDATE_FIELD1" == "TRUE" ] || [ "$UPDATE_FIELD1" == "true" ] || [ "$UPDATE_FIELD1" == "True" ] || [ "$UPDATE_FIELD1" == "YES" ] || [ "$UPDATE_FIELD1" == "yes" ] || [ "$UPDATE_FIELD1" == "Yes" ]; then
             echo "true"
-        elif [ "$UPDATE_FIELD1" == "FALSE" ] || [ "$UPDATE_FIELD1" == "false" ] || [ "$UPDATE_FIELD1" == "NO" ] || [ "$UPDATE_FIELD1" == "no" ]; then
+        elif [ "$UPDATE_FIELD1" == "FALSE" ] || [ "$UPDATE_FIELD1" == "false" ] || [ "$UPDATE_FIELD1" == "False" ] || [ "$UPDATE_FIELD1" == "NO" ] || [ "$UPDATE_FIELD1" == "no" ] || [ "$UPDATE_FIELD1" == "No" ]; then
             echo "false"
         fi
     else
@@ -86,7 +86,7 @@ function GetUpdateOverride() {
 function GetVersionOverride() {
     if [ ! "$1" = "" ]; then
         local UPDATE_FIELD2=$(echo "$1" | cut -d '@' -f2)
-        if [ "$UPDATE_FIELD2" == "TRUE" ] || [ "$UPDATE_FIELD2" == "true" ] || [ "$UPDATE_FIELD2" == "YES" ] || [ "$UPDATE_FIELD2" == "yes" ] || [ "$UPDATE_FIELD2" == "FALSE" ] || [ "$UPDATE_FIELD2" == "false" ] || [ "$UPDATE_FIELD2" == "NO" ] || [ "$UPDATE_FIELD2" == "no" ]; then
+        if [ "$UPDATE_FIELD2" == "TRUE" ] || [ "$UPDATE_FIELD2" == "true" ]  || [ "$UPDATE_FIELD2" == "True" ] || [ "$UPDATE_FIELD2" == "YES" ] || [ "$UPDATE_FIELD2" == "yes" ]  || [ "$UPDATE_FIELD2" == "Yes" ] || [ "$UPDATE_FIELD2" == "FALSE" ] || [ "$UPDATE_FIELD2" == "false" ] || [ "$UPDATE_FIELD2" == "False" ]  || [ "$UPDATE_FIELD2" == "NO" ] || [ "$UPDATE_FIELD2" == "no" ] || [ "$UPDATE_FIELD2" == "No" ] ; then
             echo "$2"
         else
             echo "$UPDATE_FIELD2"
