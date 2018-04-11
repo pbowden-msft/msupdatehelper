@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Microsoft AutoUpdate Helper for Jamf Pro
-# Script Version 1.1
+# Script Version 1.2
 #
 ## Copyright (c) 2018 Microsoft Corp. All rights reserved.
 ## Scripts are not supported under any Microsoft standard support program or service. The scripts are provided AS IS without warranty of any kind.
@@ -63,6 +63,10 @@ OVERRIDE_OUTLOOK="$8"
 Debug "OVERRIDE_OUTLOOK: $8"
 OVERRIDE_SKYPEBUSINESS="$9"
 Debug "OVERRIDE_SKYPEBUSINESS: $9"
+OVERRIDE_ONENOTE="${10}"
+Debug "OVERRIDE_ONENOTE: ${10}"
+OVERRIDE_REMOTEDESKTOP="${11}"
+Debug "OVERRIDE_REMOTEDESKTOP: ${11}"
 
 # Function to evaluate app update override
 function GetUpdateOverride() {
@@ -118,6 +122,16 @@ function GetOverrides() {
     Debug "Resolved UPDATE_SKYPEBUSINESS: $UPDATE_SKYPEBUSINESS"
     VERSION_SKYPEBUSINESS=$(GetVersionOverride "$OVERRIDE_SKYPEBUSINESS" "$VERSION_SKYPEBUSINESS")
     Debug "Resolved VERSION_SKYPEBUSINESS: $VERSION_SKYPEBUSINESS"
+    
+    UPDATE_ONENOTE=$(GetUpdateOverride "$OVERRIDE_ONENOTE" "$UPDATE_ONENOTE")
+    Debug "Resolved UPDATE_ONENOTE: $UPDATE_ONENOTE"
+    VERSION_ONENOTE=$(GetVersionOverride "$OVERRIDE_ONENOTE" "$VERSION_ONENOTE")
+    Debug "Resolved VERSION_ONENOTE: $VERSION_ONENOTE"
+    
+    UPDATE_REMOTEDESKTOP=$(GetUpdateOverride "$OVERRIDE_REMOTEDESKTOP" "$UPDATE_REMOTEDESKTOP")
+    Debug "Resolved UPDATE_REMOTEDESKTOP: $UPDATE_REMOTEDESKTOP"
+    VERSION_REMOTEDESKTOP=$(GetVersionOverride "$OVERRIDE_REMOTEDESKTOP" "$VERSION_REMOTEDESKTOP")
+    Debug "Resolved VERSION_REMOTEDESKTOP: $VERSION_REMOTEDESKTOP"
 }
 
 # Function to check whether MAU 3.18 or later command-line updates are available
