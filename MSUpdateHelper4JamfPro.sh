@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Microsoft AutoUpdate Helper for Jamf Pro
-# Script Version 1.1
+# Script Version 1.2
 #
 ## Copyright (c) 2018 Microsoft Corp. All rights reserved.
 ## Scripts are not supported under any Microsoft standard support program or service. The scripts are provided AS IS without warranty of any kind.
@@ -45,7 +45,7 @@ PATH_COMPANYPORTAL="/Applications/Company Portal.app"
 
 # Function to enable debug logging
 function Debug() {
-    if [ "$OVERRIDE_DEBUG" == "true" ]; then
+    if [ "$OVERRIDE_DEBUG" == "true" ] || [ "$OVERRIDE_DEBUG" == "TRUE" ] || [ "$OVERRIDE_DEBUG" == "True" ] || [ "$OVERRIDE_DEBUG" == "YES" ] || [ "$OVERRIDE_DEBUG" == "yes" ] || [ "$OVERRIDE_DEBUG" == "Yes" ]; then
         LOG=$(date; echo "$1")
         echo "$LOG"
     fi
@@ -63,14 +63,18 @@ OVERRIDE_OUTLOOK="$8"
 Debug "OVERRIDE_OUTLOOK: $8"
 OVERRIDE_SKYPEBUSINESS="$9"
 Debug "OVERRIDE_SKYPEBUSINESS: $9"
+OVERRIDE_ONENOTE="${10}"
+Debug "OVERRIDE_ONENOTE: ${10}"
+OVERRIDE_REMOTEDESKTOP="${11}"
+Debug "OVERRIDE_REMOTEDESKTOP: ${11}"
 
 # Function to evaluate app update override
 function GetUpdateOverride() {
     if [ ! "$1" = "" ]; then
         local UPDATE_FIELD1=$(echo "$1" | cut -d '@' -f1)
-        if [ "$UPDATE_FIELD1" == "TRUE" ] || [ "$UPDATE_FIELD1" == "true" ] || [ "$UPDATE_FIELD1" == "YES" ] || [ "$UPDATE_FIELD1" == "yes" ]; then
+        if [ "$UPDATE_FIELD1" == "TRUE" ] || [ "$UPDATE_FIELD1" == "true" ] || [ "$UPDATE_FIELD1" == "True" ] || [ "$UPDATE_FIELD1" == "YES" ] || [ "$UPDATE_FIELD1" == "yes" ] || [ "$UPDATE_FIELD1" == "Yes" ]; then
             echo "true"
-        elif [ "$UPDATE_FIELD1" == "FALSE" ] || [ "$UPDATE_FIELD1" == "false" ] || [ "$UPDATE_FIELD1" == "NO" ] || [ "$UPDATE_FIELD1" == "no" ]; then
+        elif [ "$UPDATE_FIELD1" == "FALSE" ] || [ "$UPDATE_FIELD1" == "false" ] || [ "$UPDATE_FIELD1" == "False" ] || [ "$UPDATE_FIELD1" == "NO" ] || [ "$UPDATE_FIELD1" == "no" ] || [ "$UPDATE_FIELD1" == "No" ]; then
             echo "false"
         fi
     else
@@ -82,7 +86,7 @@ function GetUpdateOverride() {
 function GetVersionOverride() {
     if [ ! "$1" = "" ]; then
         local UPDATE_FIELD2=$(echo "$1" | cut -d '@' -f2)
-        if [ "$UPDATE_FIELD2" == "TRUE" ] || [ "$UPDATE_FIELD2" == "true" ] || [ "$UPDATE_FIELD2" == "YES" ] || [ "$UPDATE_FIELD2" == "yes" ] || [ "$UPDATE_FIELD2" == "FALSE" ] || [ "$UPDATE_FIELD2" == "false" ] || [ "$UPDATE_FIELD2" == "NO" ] || [ "$UPDATE_FIELD2" == "no" ]; then
+        if [ "$UPDATE_FIELD2" == "TRUE" ] || [ "$UPDATE_FIELD2" == "true" ]  || [ "$UPDATE_FIELD2" == "True" ] || [ "$UPDATE_FIELD2" == "YES" ] || [ "$UPDATE_FIELD2" == "yes" ]  || [ "$UPDATE_FIELD2" == "Yes" ] || [ "$UPDATE_FIELD2" == "FALSE" ] || [ "$UPDATE_FIELD2" == "false" ] || [ "$UPDATE_FIELD2" == "False" ]  || [ "$UPDATE_FIELD2" == "NO" ] || [ "$UPDATE_FIELD2" == "no" ] || [ "$UPDATE_FIELD2" == "No" ] ; then
             echo "$2"
         else
             echo "$UPDATE_FIELD2"
@@ -118,6 +122,16 @@ function GetOverrides() {
     Debug "Resolved UPDATE_SKYPEBUSINESS: $UPDATE_SKYPEBUSINESS"
     VERSION_SKYPEBUSINESS=$(GetVersionOverride "$OVERRIDE_SKYPEBUSINESS" "$VERSION_SKYPEBUSINESS")
     Debug "Resolved VERSION_SKYPEBUSINESS: $VERSION_SKYPEBUSINESS"
+    
+    UPDATE_ONENOTE=$(GetUpdateOverride "$OVERRIDE_ONENOTE" "$UPDATE_ONENOTE")
+    Debug "Resolved UPDATE_ONENOTE: $UPDATE_ONENOTE"
+    VERSION_ONENOTE=$(GetVersionOverride "$OVERRIDE_ONENOTE" "$VERSION_ONENOTE")
+    Debug "Resolved VERSION_ONENOTE: $VERSION_ONENOTE"
+    
+    UPDATE_REMOTEDESKTOP=$(GetUpdateOverride "$OVERRIDE_REMOTEDESKTOP" "$UPDATE_REMOTEDESKTOP")
+    Debug "Resolved UPDATE_REMOTEDESKTOP: $UPDATE_REMOTEDESKTOP"
+    VERSION_REMOTEDESKTOP=$(GetVersionOverride "$OVERRIDE_REMOTEDESKTOP" "$VERSION_REMOTEDESKTOP")
+    Debug "Resolved VERSION_REMOTEDESKTOP: $VERSION_REMOTEDESKTOP"
 }
 
 # Function to check whether MAU 3.18 or later command-line updates are available
