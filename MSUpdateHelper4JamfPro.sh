@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Microsoft AutoUpdate Helper for Jamf Pro
-# Script Version 1.2
+# Script Version 1.3
 #
 ## Copyright (c) 2018 Microsoft Corp. All rights reserved.
 ## Scripts are not supported under any Microsoft standard support program or service. The scripts are provided AS IS without warranty of any kind.
@@ -180,8 +180,9 @@ function CheckAppInstall() {
 
 # Function to determine the logged-in state of the Mac
 function DetermineLoginState() {
-	CONSOLE=$(stat -f%Su /dev/console)
-	if [ "$CONSOLE" == "root" ]; then
+	# The following line is courtesy of @macmule - https://macmule.com/2014/11/19/how-to-get-the-currently-logged-in-user-in-a-more-apple-approved-way/
+	CONSOLE=$(/usr/bin/python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");')
+	if [ "$CONSOLE" == "" ]; then
     	echo "No user logged in"
 		CMD_PREFIX=""
 	else
