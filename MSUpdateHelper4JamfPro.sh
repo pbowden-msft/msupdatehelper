@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Microsoft AutoUpdate Helper for Jamf Pro
-# Script Version 1.3
+# Script Version 1.4
 #
 ## Copyright (c) 2018 Microsoft Corp. All rights reserved.
 ## Scripts are not supported under any Microsoft standard support program or service. The scripts are provided AS IS without warranty of any kind.
@@ -225,48 +225,64 @@ if [ "$UPDATE_WORD" == "true" ]; then
 	RegisterApp "$PATH_WORD" "MSWD15"
 	SetTargetVersion "$VERSION_WORD"
 	PerformUpdate "MSWD15" "$TARGET_VERSION"
+else
+	Debug "Update for Word disabled"
 fi
 if [ "$UPDATE_EXCEL" == "true" ]; then
 	Debug "Going for Excel update"
 	RegisterApp "$PATH_EXCEL" "XCEL15"
 	SetTargetVersion "$VERSION_EXCEL"
 	PerformUpdate "XCEL15" "$TARGET_VERSION"
+else
+	Debug "Update for Excel disabled"
 fi
 if [ "$UPDATE_POWERPOINT" == "true" ]; then
 	Debug "Going for PowerPoint update"
 	RegisterApp "$PATH_POWERPOINT" "PPT315"
 	SetTargetVersion "$VERSION_POWERPOINT"
 	PerformUpdate "PPT315" "$TARGET_VERSION"
+else
+	Debug "Update for PowerPoint disabled"
 fi
 if [ "$UPDATE_OUTLOOK" == "true" ]; then
 	Debug "Going for Outlook update"
 	RegisterApp "$PATH_OUTLOOK" "OPIM15"
 	SetTargetVersion "$VERSION_OUTLOOK"
 	PerformUpdate "OPIM15" "$TARGET_VERSION"
+else
+	Debug "Update for Outlook disabled"
 fi
 if [ "$UPDATE_ONENOTE" == "true" ]; then
 	Debug "Going for OneNote update"
 	RegisterApp "$PATH_ONENOTE" "ONMC15"
 	SetTargetVersion "$VERSION_ONENOTE"
 	PerformUpdate "ONMC15" "$TARGET_VERSION"
+else
+	Debug "Update for OneNote disabled"
 fi
 if [ "$UPDATE_SKYPEBUSINESS" == "true" ]; then
 	Debug "Going for SfB update"
 	RegisterApp "$PATH_SKYPEBUSINESS" "MSFB16"
 	SetTargetVersion "$VERSION_SKYPEBUSINESS"
 	PerformUpdate "MSFB16" "$TARGET_VERSION"
+else
+	Debug "Update for SfB disabled"
 fi
 if [ "$UPDATE_REMOTEDESKTOP" == "true" ]; then
 	Debug "Going for Remote Desktop update"
 	RegisterApp "$PATH_REMOTEDESKTOP" "MSRD10"
 	SetTargetVersion "$VERSION_REMOTEDESKTOP"
 	PerformUpdate "MSRD10" "$TARGET_VERSION"
+else
+	Debug "Update for Remote Desktop disabled"
 fi
 if [ "$UPDATE_COMPANYPORTAL" == "true" ]; then
 	Debug "Going for Company Portal update"
 	RegisterApp "$PATH_COMPANYPORTAL" "IMCP01"
 	SetTargetVersion "$VERSION_COMPANYPORTAL"
 	PerformUpdate "IMCP01" "$TARGET_VERSION"
+else
+	Debug "Update for Company Portal disabled"
 fi
 
 exit 0
