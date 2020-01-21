@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Microsoft AutoUpdate Trigger for Jamf Pro
-# Script Version 1.5
+# Script Version 1.6
 #
 ## Copyright (c) 2020 Microsoft Corp. All rights reserved.
 ## Scripts are not supported under any Microsoft standard support program or service. The scripts are provided AS IS without warranty of any kind.
@@ -80,8 +80,10 @@ function DetermineLoginState() {
 	# The following line is courtesy of @macmule - https://macmule.com/2014/11/19/how-to-get-the-currently-logged-in-user-in-a-more-apple-approved-way/
 	CONSOLE=$(/usr/bin/python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");')
 	if [ "$CONSOLE" == "" ]; then
-    	echo "No user logged in"
-		CMD_PREFIX=""
+		echo "No user currently logged in to console - using fall-back account"
+        CONSOLE=$(/usr/bin/last -1 -t ttys000 | /usr/bin/awk '{print $1}')
+        echo "Using account $CONSOLE for update"
+		CMD_PREFIX="sudo -u $CONSOLE "
 	else
     	echo "User $CONSOLE is logged in"
     	CMD_PREFIX="sudo -u $CONSOLE "
