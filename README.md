@@ -11,5 +11,5 @@ Parameter 9 = `Update SfB @ Target Version`<br/>
 Parameter 10 = `Update OneNote @ Target Version`<br/>
 Parameter 11 = `Update Remote Desktop @ Target Version`<br/>
 
-See http://office4mac.com/courses/msupdate for the training video on how to use this helper!<br/><br/>
+See https://office4mac.thinkific.com/courses/msupdate for the training video on how to use this helper!<br/><br/>
 Also, check-out Dan Snelson's script at https://www.jamf.com/jamf-nation/discussions/27968/leveraging-microsoft-autoupdate-3-18-msupdate-binary-with-jamf-pro-10-patch-policies
