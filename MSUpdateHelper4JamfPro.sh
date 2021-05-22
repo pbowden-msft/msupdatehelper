@@ -187,7 +187,8 @@ function DetermineLoginState() {
 		CMD_PREFIX=""
 	else
     	echo "User $CONSOLE is logged in"
-    	CMD_PREFIX="sudo -u $CONSOLE "
+    	userID=$(/usr/bin/id -u "$CONSOLE")
+	CMD_PREFIX="/bin/launchctl asuser $userID "
 	fi
 	Debug "Resolved CMD_PREFIX: $CMD_PREFIX"
 }
