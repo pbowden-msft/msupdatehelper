@@ -89,10 +89,12 @@ function DetermineLoginState() {
 		echo "No user currently logged in to console - using fall-back account"
         CONSOLE=$(/usr/bin/last -1 -t ttys000 | /usr/bin/awk '{print $1}')
         echo "Using account $CONSOLE for update"
-		CMD_PREFIX="/usr/bin/sudo -u $CONSOLE "
+		userID=$(/usr/bin/id -u "$CONSOLE")
+		CMD_PREFIX="/bin/launchctl asuser $userID "
 	else
     	echo "User $CONSOLE is logged in"
-    	CMD_PREFIX="/usr/bin/sudo -u $CONSOLE "
+    		userID=$(/usr/bin/id -u "$CONSOLE")
+		CMD_PREFIX="/bin/launchctl asuser $userID "
 	fi
 }
 
