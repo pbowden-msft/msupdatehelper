@@ -1,9 +1,9 @@
 #!/bin/sh
 #
 # Microsoft AutoUpdate Helper for Jamf Pro
-# Script Version 1.4
+# Script Version 1.5
 #
-## Copyright (c) 2018 Microsoft Corp. All rights reserved.
+## Copyright (c) 2022 Microsoft Corp. All rights reserved.
 ## Scripts are not supported under any Microsoft standard support program or service. The scripts are provided AS IS without warranty of any kind.
 ## Microsoft disclaims all implied warranties including, without limitation, any implied warranties of merchantability or of fitness for a 
 ## particular purpose. The entire risk arising out of the use or performance of the scripts and documentation remains with you. In no event shall
@@ -180,8 +180,8 @@ function CheckAppInstall() {
 
 # Function to determine the logged-in state of the Mac
 function DetermineLoginState() {
-	# The following line is courtesy of @macmule - https://macmule.com/2014/11/19/how-to-get-the-currently-logged-in-user-in-a-more-apple-approved-way/
-	CONSOLE=$(/usr/bin/python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");')
+	# The following line is is taken from: https://erikberglund.github.io/2018/Get-the-currently-logged-in-user,-in-Bash/
+	CONSOLE="$(/usr/sbin/scutil <<< "show State:/Users/ConsoleUser" | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }')"
 	if [ "$CONSOLE" == "" ]; then
     	echo "No user logged in"
 		CMD_PREFIX=""
